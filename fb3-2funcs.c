@@ -1,8 +1,8 @@
 /* Companion source code for "flex & bison", published by O'Reilly
- * Media, ISBN 978-0-596-15597-1
- * Copyright (c) 2009, Taughannock Networks. All rights reserved.
- * See the README file for license conditions and contact info.
- * $Header: /home/johnl/flnb/code/RCS/fb3-2funcs.c,v 2.1 2009/11/08 02:53:18 johnl Exp $
+ * 978-0-596-15597-1 Copyright (c) 2009, Taughannock Networks. All rights
+ * reserved.  See the README file for license conditions and contact info.
+ * $Header: /home/johnl/flnb/code/RCS/fb3-2funcs.c,v 2.1 2009/11/08 02:53:18
+ * johnl Exp $
  */
 /*
  * helper functions for fb3-2
@@ -13,6 +13,7 @@
 #  include <string.h>
 #  include <math.h>
 #  include "fb3-2.h"
+# include "fb3-2.tab.h"
 
 /* symbol table */
 /* hash a symbol */
@@ -48,9 +49,7 @@ lookup(char* sym)
   }
   yyerror("symbol table overflow\n");
   abort(); /* tried them all, table is full */
-
 }
-
 
 
 struct ast *
@@ -251,25 +250,25 @@ eval(struct ast *a)
   /* control flow */
   /* null if/else/do expressions allowed in the grammar, so check for them */
   case 'I': 
-    if( eval( ((struct flow *)a)->cond) != 0) {
-      if( ((struct flow *)a)->tl) {
-	v = eval( ((struct flow *)a)->tl);
+    if (eval(((struct flow *)a)->cond) != 0) {
+      if (((struct flow *)a)->tl) {
+	      v = eval(((struct flow *)a)->tl);
       } else
-	v = 0.0;		/* a default value */
+	      v = 0.0;		/* a default value */
     } else {
-      if( ((struct flow *)a)->el) {
+      if (((struct flow *)a)->el) {
         v = eval(((struct flow *)a)->el);
       } else
-	v = 0.0;		/* a default value */
+	      v = 0.0;		/* a default value */
     }
     break;
 
   case 'W':
     v = 0.0;		/* a default value */
     
-    if( ((struct flow *)a)->tl) {
-      while( eval(((struct flow *)a)->cond) != 0)
-	v = eval(((struct flow *)a)->tl);
+    if (((struct flow *)a)->tl) {
+      while (eval(((struct flow *)a)->cond) != 0)
+	      v = eval(((struct flow *)a)->tl);
     }
     break;			/* last value is value */
 	              
@@ -281,6 +280,7 @@ eval(struct ast *a)
 
   default: printf("internal error: bad node %c\n", a->nodetype);
   }
+
   return v;
 }
 
@@ -290,20 +290,20 @@ callbuiltin(struct fncall *f)
   enum bifs functype = f->functype;
   double v = eval(f->l);
 
- switch(functype) {
- case B_sqrt:
-   return sqrt(v);
- case B_exp:
-   return exp(v);
- case B_log:
-   return log(v);
- case B_print:
-   printf("= %4.4g\n", v);
-   return v;
- default:
-   yyerror("Unknown built-in function %d", functype);
-   return 0.0;
- }
+  switch(functype) {
+  case B_sqrt:
+    return sqrt(v);
+  case B_exp:
+    return exp(v);
+  case B_log:
+    return log(v);
+  case B_print:
+    printf("= %4.4g\n", v);
+    return v;
+  default:
+    yyerror("Unknown built-in function %d", functype);
+    return 0.0;
+  }
 }
 
 static double
@@ -404,20 +404,19 @@ treefree(struct ast *a)
     break;
 
   case '=':
-    free( ((struct symasgn *)a)->v);
+    free(((struct symasgn *)a)->v);
     break;
 
   case 'I': case 'W':
-    free( ((struct flow *)a)->cond);
-    if( ((struct flow *)a)->tl) free( ((struct flow *)a)->tl);
-    if( ((struct flow *)a)->el) free( ((struct flow *)a)->el);
+    free(((struct flow *)a)->cond);
+    if (((struct flow *)a)->tl) free(((struct flow *)a)->tl);
+    if (((struct flow *)a)->el) free(((struct flow *)a)->el);
     break;
 
   default: printf("internal error: free bad node %c\n", a->nodetype);
   }	  
   
   free(a); /* always free the node itself */
-
 }
 
 void
@@ -431,8 +430,7 @@ yyerror(char *s, ...)
   fprintf(stderr, "\n");
 }
 
-int
-main()
+int main()
 {
   printf("> "); 
   return yyparse();

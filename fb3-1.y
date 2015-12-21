@@ -11,6 +11,8 @@
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include "fb3-1.h"
+
+int yylex();
 %}
 
 %union {

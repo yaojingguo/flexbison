@@ -10,6 +10,7 @@
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include "fb3-2.h"
+int yylex();
 %}
 
 %union {
@@ -49,10 +50,10 @@ stmt: IF exp THEN list           { $$ = newflow('I', $2, $4, NULL); }
 ;
 
 list: /* nothing */ { $$ = NULL; }
-   | stmt ';' list { if ($3 == NULL)
-	                $$ = $1;
+   | stmt ';' list  { if ($3 == NULL)
+	                      $$ = $1;
                       else
-			$$ = newast('L', $1, $3);
+			                  $$ = newast('L', $1, $3);
                     }
    ;
 
@@ -80,14 +81,15 @@ symlist: NAME       { $$ = newsymlist($1, NULL); }
 
 calclist: /* nothing */
   | calclist stmt EOL {
-    if(debug) dumpast($2, 0);
-     printf("= %4.4g\n> ", eval($2));
-     treefree($2);
+      if(debug) dumpast($2, 0);
+      printf("= %4.4g\n> ", eval($2));
+      treefree($2);
     }
-  | calclist LET NAME '(' symlist ')' '=' list EOL {
-                       dodef($3, $5, $8);
-                       printf("Defined %s\n> ", $3->name); }
-
+  | calclist LET NAME '(' symlist ')' '=' list EOL 
+    {
+      dodef($3, $5, $8);
+      printf("Defined %s\n> ", $3->name); 
+    }
   | calclist error EOL { yyerrok; printf("> "); }
  ;
 %%
